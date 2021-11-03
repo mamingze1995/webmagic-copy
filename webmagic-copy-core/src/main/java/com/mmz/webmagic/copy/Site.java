@@ -230,7 +230,7 @@ public class Site {
 
     /**
      * whether use gzip, default is true, you can set it to false to disable gzip.
-     * @param useGzip 11
+     * @param useGzip
      */
     public void setUseGzip(boolean useGzip) {
         this.useGzip = useGzip;
