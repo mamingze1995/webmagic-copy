@@ -235,4 +235,18 @@ public class Site {
     public void setUseGzip(boolean useGzip) {
         this.useGzip = useGzip;
     }
+
+    public boolean isDisableCookieManagement() {
+        return disableCookieManagement;
+    }
+
+    /**
+     *
+     * @param disableCookieManagement
+     * @return
+     */
+    public Site setDisableCookieManagement(boolean disableCookieManagement) {
+        this.disableCookieManagement = disableCookieManagement;
+        return this;
+    }
 }
