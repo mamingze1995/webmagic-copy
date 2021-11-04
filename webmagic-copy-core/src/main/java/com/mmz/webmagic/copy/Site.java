@@ -47,6 +47,7 @@ public class Site {
 
     /**
      * new a site
+     *
      * @return Site
      */
     public static Site me() {
@@ -55,6 +56,7 @@ public class Site {
 
     /**
      * add a cookie with domain
+     *
      * @param name
      * @param value
      * @return this
@@ -66,13 +68,14 @@ public class Site {
 
     /**
      * add a cookie with specific domain
+     *
      * @param domain
      * @param name
      * @param value
      * @return this
      */
     public Site addCookies(String domain, String name, String value) {
-        if(!cookies.containsKey(domain)) {
+        if (!cookies.containsKey(domain)) {
             cookies.put(domain, new HashMap<>());
         }
         cookies.get(domain).put(name, value);
@@ -81,6 +84,7 @@ public class Site {
 
     /**
      * set user agent
+     *
      * @param userAgent
      * @return this
      */
@@ -91,6 +95,7 @@ public class Site {
 
     /**
      * get cookies
+     *
      * @return defaultCookies
      */
     public Map<String, String> getCookies() {
@@ -99,6 +104,7 @@ public class Site {
 
     /**
      * get cookies of all domain
+     *
      * @return cookies
      */
     public Map<String, Map<String, String>> getAllCookies() {
@@ -107,6 +113,7 @@ public class Site {
 
     /**
      * get user agent
+     *
      * @return useragent
      */
     public String getUserAgent() {
@@ -115,6 +122,7 @@ public class Site {
 
     /**
      * get domain
+     *
      * @return domain
      */
     public String getDomain() {
@@ -148,6 +156,7 @@ public class Site {
      * Set acceptStatCode
      * When status code of http response is in this set, it will be processed.
      * {200} by default
+     *
      * @param acceptStatCode
      * @return
      */
@@ -163,6 +172,7 @@ public class Site {
     /**
      * set the inteval between the processing of two pages.
      * time unit is milliseconds.
+     *
      * @param sleepTime
      * @return
      */
@@ -182,6 +192,7 @@ public class Site {
 
     /**
      * set retry times when download fail, 0 by default
+     *
      * @param retryTimes
      * @return this
      */
@@ -196,7 +207,8 @@ public class Site {
     /**
      * put a http header for downloader.
      * use {@link #addCookie(String, String)} for cookie and {@link #setUserAgent(String)} for user-agent
-     * @param key of http header, there are some keys constant in {@link HttpConstant.Header}
+     *
+     * @param key   of http header, there are some keys constant in {@link HttpConstant.Header}
      * @param value of header
      * @return this
      */
@@ -207,6 +219,7 @@ public class Site {
 
     /**
      * when cycleRetryTime is more than 0, it will add back to scheduler and try download again.
+     *
      * @return cycleRetryTimes
      */
     public int getCycleRetryTimes() {
@@ -215,6 +228,7 @@ public class Site {
 
     /**
      * set cycleRetryTimes time when download fail, 0 by default.
+     *
      * @param cycleRetryTimes
      * @return this
      */
@@ -230,6 +244,7 @@ public class Site {
 
     /**
      * whether use gzip, default is true, you can set it to false to disable gzip.
+     *
      * @param useGzip
      */
     public void setUseGzip(boolean useGzip) {
@@ -241,12 +256,62 @@ public class Site {
     }
 
     /**
-     *
      * @param disableCookieManagement
      * @return
      */
     public Site setDisableCookieManagement(boolean disableCookieManagement) {
         this.disableCookieManagement = disableCookieManagement;
         return this;
+    }
+
+    public Task toTask() {
+        return new Task() {
+            @Override
+            public String getUUID() {
+                String uuid = Site.this.getDomain();
+                if (null == uuid) {
+                    uuid = UUID.randomUUID().toString();
+                }
+                return uuid;
+            }
+
+            @Override
+            public Site getSite() {
+                return Site.this;
+            }
+        };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Site site = (Site) o;
+        return sleepTime == site.sleepTime && retryTimes == site.retryTimes && cycleRetryTimes == site.cycleRetryTimes && retrySleepTime == site.retrySleepTime && timeOut == site.timeOut && useGzip == site.useGzip && disableCookieManagement == site.disableCookieManagement && Objects.equals(domain, site.domain) && Objects.equals(userAgent, site.userAgent) && Objects.equals(defaultCookies, site.defaultCookies) && Objects.equals(cookies, site.cookies) && Objects.equals(charset, site.charset) && Objects.equals(acceptStatCode, site.acceptStatCode) && Objects.equals(headers, site.headers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(domain, userAgent, defaultCookies, cookies, charset, sleepTime, retryTimes, cycleRetryTimes, retrySleepTime, timeOut, acceptStatCode, headers, useGzip, disableCookieManagement);
+    }
+
+    @Override
+    public String toString() {
+        return "Site{" +
+                "domain='" + domain + '\'' +
+                ", userAgent='" + userAgent + '\'' +
+                ", defaultCookies=" + defaultCookies +
+                ", cookies=" + cookies +
+                ", charset='" + charset + '\'' +
+                ", sleepTime=" + sleepTime +
+                ", retryTimes=" + retryTimes +
+                ", cycleRetryTimes=" + cycleRetryTimes +
+                ", retrySleepTime=" + retrySleepTime +
+                ", timeOut=" + timeOut +
+                ", acceptStatCode=" + acceptStatCode +
+                ", headers=" + headers +
+                ", useGzip=" + useGzip +
+                ", disableCookieManagement=" + disableCookieManagement +
+                '}';
     }
 }
