@@ -1,7 +1,14 @@
 package com.mmz.webmagic.copy.model;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: note
@@ -60,7 +67,38 @@ public class HttpRequestBody implements Serializable {
         this.encoding = encoding;
     }
 
-//    public static HttpRequestBody json(String json, String encoding) {
-//        return new HttpRequestBody(json.getBytes(), )
-//    }
+    public static HttpRequestBody json(String json, String encoding) {
+        try {
+            return new HttpRequestBody(json.getBytes(encoding), ContentType.JSON, encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("illegal encoding " + encoding, e);
+        }
+    }
+
+    public static HttpRequestBody xml(String xml, String encoding) {
+        try {
+            return new HttpRequestBody(xml.getBytes(encoding), ContentType.XML, encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("illegal encoding " + encoding, e);
+        }
+    }
+
+    public static HttpRequestBody custom(byte[] body, String contentType, String encoding) {
+        return new HttpRequestBody(body, contentType, encoding);
+    }
+
+
+    public static HttpRequestBody form(Map<String, Object> params, String encoding) {
+        List<NameValuePair> nameValuePairs = new ArrayList<>(params.size());
+        for(Map.Entry<String, Object> entry : params.entrySet()) {
+            nameValuePairs.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+        }
+        try {
+            return new HttpRequestBody(URLEncodedUtils.format
+                    (nameValuePairs, encoding).getBytes(encoding), ContentType.FORM, encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("illegal encoding " + encoding, e);
+        }
+    }
+
 }
